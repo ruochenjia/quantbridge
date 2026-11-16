@@ -11,6 +11,7 @@
 		masteredQuestions: new Set(JSON.parse(localStorage.getItem('quant_mastered') || '[]')),
 		quizAnswers: JSON.parse(localStorage.getItem('quant_quiz_answers') || '{}'),
 		checkedRoadmap: new Set(JSON.parse(localStorage.getItem('quant_roadmap_checked') || '[]')),
+		reviewedSyllabus: new Set(JSON.parse(localStorage.getItem('quant_syllabus_reviewed') || '[]')),
 		mentalMathHighScore: parseInt(localStorage.getItem('quant_mental_highscore') || '0', 10),
 		// Interactive Labs State
 		bs: {
@@ -172,9 +173,20 @@
 	// --- Tab Navigation ---
 	function setActiveTab(tabId) {
 		state.activeTab = tabId;
+		const navTabs = $('.nav-tabs');
+		let activeBtn = null;
 		$$('.nav-btn').forEach(btn => {
-			btn.classList.toggle('active', btn.dataset.tab === tabId);
+			const isActive = btn.dataset.tab === tabId;
+			btn.classList.toggle('active', isActive);
+			if (isActive) activeBtn = btn;
 		});
+		if (navTabs && activeBtn) {
+			const navRect = navTabs.getBoundingClientRect();
+			const btnRect = activeBtn.getBoundingClientRect();
+			if (btnRect.left < navRect.left || btnRect.right > navRect.right) {
+				navTabs.scrollLeft += (btnRect.left - navRect.left) - (navTabs.clientWidth - btnRect.width) / 2;
+			}
+		}
 		$$('.tab-content').forEach(panel => {
 			panel.classList.toggle('active', panel.id === `tab-${tabId}`);
 		});
@@ -207,8 +219,18 @@
 		const totalSemesters = 8;
 		const checkedCount = state.checkedRoadmap.size;
 
+		const syllabusTopics = getSyllabusTopics();
+		const totalSyllabus = syllabusTopics.length;
+		const reviewedCount = syllabusTopics.filter(t => state.reviewedSyllabus.has(t.id)).length;
+		const syllabusPct = totalSyllabus > 0 ? (reviewedCount / totalSyllabus) * 100 : 0;
+
 		// Overall readiness index
-		const readiness = Math.min(100, Math.round((masteredPct * 0.45) + ((correctCount / Math.max(1, totalQuizzes)) * 35) + ((checkedCount / totalSemesters) * 20)));
+		const readiness = Math.min(100, Math.round(
+			(masteredPct * 0.35) +
+			((correctCount / Math.max(1, totalQuizzes)) * 100 * 0.30) +
+			((checkedCount / totalSemesters) * 100 * 0.15) +
+			(syllabusPct * 0.20)
+		));
 
 		const dial = $('#userProgressDial');
 		if (dial) {
@@ -228,8 +250,39 @@
 		const badgeQuiz = $('#badgeQuizDone');
 		if (badgeQuiz) badgeQuiz.innerHTML = `📝 <strong>${correctCount}/${totalQuizzes}</strong> Quizzes Passed`;
 
+		const statSyllabus = $('#statSyllabusReviewed');
+		if (statSyllabus) statSyllabus.textContent = `${reviewedCount}/${totalSyllabus}`;
+
+		const badgeSyllabus = $('#badgeSyllabusDone');
+		if (badgeSyllabus) badgeSyllabus.innerHTML = `📖 <strong>${reviewedCount}/${totalSyllabus}</strong> Syllabus`;
+
 		const badgeHigh = $('#badgeHighScore');
 		if (badgeHigh) badgeHigh.innerHTML = `⚡ <strong>${state.mentalMathHighScore}</strong> Math High Score`;
+	}
+
+	// --- Syllabus Data Helpers ---
+	function getSyllabusModules() {
+		const a = (typeof QUANT_SYLLABUS_A !== 'undefined') ? QUANT_SYLLABUS_A : [];
+		const b = (typeof QUANT_SYLLABUS_B !== 'undefined') ? QUANT_SYLLABUS_B : [];
+		return [...a, ...b];
+	}
+
+	function getSyllabusTopics() {
+		return getSyllabusModules().flatMap(m => (m.topics || []).map(t => ({
+			...t,
+			moduleId: m.id,
+			moduleNum: m.num,
+			moduleTitle: m.title
+		})));
+	}
+
+	function escapeSyllabusHtml(text) {
+		return String(text == null ? '' : text)
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;');
 	}
 
 	// --- Render 1: Roles Grid & Matcher ---
@@ -1468,12 +1521,34 @@
 
 	// --- Render 6: Interview & Exam Question Bank ---
 	function initInterviewTab() {
-		renderQuestionBank();
-
 		const firmFilter = $('#filterFirm');
 		const diffFilter = $('#filterDiff');
 		const catFilter = $('#filterCategory');
 		const searchInput = $('#bankSearchInput');
+
+		// Populate filters from the actual question bank so new questions never
+		// get stranded behind a hardcoded option list.
+		const questions = QUANT_DATA.interviewQuestions || [];
+		const firms = [...new Set(questions.map(q => q.firm))].sort((a, b) => a.localeCompare(b));
+		const categories = [...new Set(questions.map(q => q.category))].sort((a, b) => a.localeCompare(b));
+		const difficultyOrder = ['Easy', 'Medium', 'Hard'];
+		const difficulties = [...new Set(questions.map(q => q.difficulty))]
+			.sort((a, b) => difficultyOrder.indexOf(a) - difficultyOrder.indexOf(b));
+
+		if (firmFilter) {
+			firmFilter.innerHTML = `<option value="all">All Firms (${firms.length})</option>` +
+				firms.map(f => `<option value="${f}">${f}</option>`).join('');
+		}
+		if (catFilter) {
+			catFilter.innerHTML = `<option value="all">All Categories (${categories.length})</option>` +
+				categories.map(c => `<option value="${c}">${c}</option>`).join('');
+		}
+		if (diffFilter) {
+			diffFilter.innerHTML = '<option value="all">All Difficulties</option>' +
+				difficulties.map(d => `<option value="${d}">${d}</option>`).join('');
+		}
+
+		renderQuestionBank();
 
 		[firmFilter, diffFilter, catFilter].forEach(sel => {
 			if (sel) sel.addEventListener('change', renderQuestionBank);
@@ -1587,7 +1662,180 @@
 			.replace(/\n- /g, '<br/>• ');
 	}
 
-	// --- Render 7: Curated Resources ---
+	// --- Render 7: Full Syllabus (modules, subtopics, resources, practice) ---
+	function initSyllabusTab() {
+		const list = $('#syllabusList');
+		if (!list) return;
+
+		const searchInput = $('#syllabusSearchInput');
+		const expandBtn = $('#syllabusExpandAll');
+		const collapseBtn = $('#syllabusCollapseAll');
+
+		if (searchInput) {
+			searchInput.addEventListener('input', () => {
+				renderSyllabus(searchInput.value.trim().toLowerCase(), new Set());
+			});
+		}
+
+		if (expandBtn) {
+			expandBtn.addEventListener('click', () => {
+				$$('.syllabus-topic', list).forEach(d => { d.open = true; });
+			});
+		}
+
+		if (collapseBtn) {
+			collapseBtn.addEventListener('click', () => {
+				$$('.syllabus-topic', list).forEach(d => { d.open = false; });
+			});
+		}
+
+		renderSyllabus('', new Set());
+	}
+
+	function renderSyllabus(query, openTopics) {
+		const list = $('#syllabusList');
+		if (!list) return;
+
+		const modules = getSyllabusModules();
+		const countBadge = $('#syllabusResultCount');
+		let visibleTopics = 0;
+
+		const moduleHtml = modules.map(module => {
+			const moduleMatches = !query ||
+				`${module.title} ${module.objective} ${module.timeline} ${module.prereqs}`.toLowerCase().includes(query);
+
+			const topics = (module.topics || []).filter(topic => {
+				if (moduleMatches) return true;
+				const haystack = [
+					topic.code,
+					topic.title,
+					...(topic.subtopics || []),
+					...(topic.resources || []).map(r => r.label),
+					...(topic.practice || []).flatMap(p => [p.q, p.a])
+				].join(' ').toLowerCase();
+				return haystack.includes(query);
+			});
+
+			if (topics.length === 0) return '';
+			visibleTopics += topics.length;
+
+			const reviewedInModule = topics.filter(t => state.reviewedSyllabus.has(t.id)).length;
+
+			const topicsHtml = topics.map(topic => {
+				const isOpen = !!query || openTopics.has(topic.id);
+				const isReviewed = state.reviewedSyllabus.has(topic.id);
+
+				const subtopicsHtml = (topic.subtopics || [])
+					.map(s => `<li>${escapeSyllabusHtml(s)}</li>`).join('');
+
+				const resourcesHtml = (topic.resources || []).map(r => {
+					const label = escapeSyllabusHtml(r.label);
+					if (!r.url) return `<li>${label}</li>`;
+					return `<li><a href="${escapeSyllabusHtml(r.url)}" target="_blank" rel="noopener noreferrer">${label} <span class="syllabus-link-icon">↗</span></a></li>`;
+				}).join('');
+
+				const practiceHtml = (topic.practice || []).map((p, idx) => `
+					<details class="syllabus-practice">
+						<summary><span class="syllabus-practice-num">Q${idx + 1}</span> ${escapeSyllabusHtml(p.q)}</summary>
+						<div class="syllabus-answer"><strong>Answer:</strong> ${escapeSyllabusHtml(p.a)}</div>
+					</details>
+				`).join('');
+
+				return `
+					<details class="syllabus-topic" data-topic-id="${escapeSyllabusHtml(topic.id)}" ${isOpen ? 'open' : ''}>
+						<summary class="syllabus-topic-summary">
+							<span class="syllabus-topic-code">${escapeSyllabusHtml(topic.code)}</span>
+							<span class="syllabus-topic-title">${escapeSyllabusHtml(topic.title)}</span>
+							<span class="syllabus-topic-stats">
+								<span>${(topic.subtopics || []).length} concepts</span>
+								<span>${(topic.practice || []).length} practice</span>
+							</span>
+							<label class="syllabus-review-toggle">
+								<input type="checkbox" class="syllabus-review-checkbox" data-topic-id="${escapeSyllabusHtml(topic.id)}" ${isReviewed ? 'checked' : ''} />
+								<span>Reviewed</span>
+							</label>
+						</summary>
+						<div class="syllabus-topic-body">
+							<div class="syllabus-section-block">
+								<h4>📌 Key Concepts & Subtopics</h4>
+								<ul class="syllabus-subtopic-list">${subtopicsHtml}</ul>
+							</div>
+							<div class="syllabus-section-block">
+								<h4>🔗 Curated Resources</h4>
+								<ul class="syllabus-resource-list">${resourcesHtml || '<li>No external resources listed.</li>'}</ul>
+							</div>
+							<div class="syllabus-section-block">
+								<h4>🧠 Practice Questions</h4>
+								<div class="syllabus-practice-list">${practiceHtml || '<p>No practice questions listed.</p>'}</div>
+							</div>
+						</div>
+					</details>
+				`;
+			}).join('');
+
+			const projectHtml = (module.project && module.project.length) ? `
+				<div class="syllabus-project">
+					<h4>🛠️ Module Project</h4>
+					<ul>${module.project.map(p => `<li>${escapeSyllabusHtml(p)}</li>`).join('')}</ul>
+				</div>
+			` : '';
+
+			return `
+				<section class="syllabus-module" style="--module-color: ${escapeSyllabusHtml(module.color || '#38bdf8')};">
+					<header class="syllabus-module-head">
+						<div class="syllabus-module-num">${escapeSyllabusHtml(module.num)}</div>
+						<div class="syllabus-module-info">
+							<h3>${escapeSyllabusHtml(module.title)}</h3>
+							<div class="syllabus-module-meta">
+								<span>🗓️ ${escapeSyllabusHtml(module.timeline)}</span>
+								<span>📋 ${escapeSyllabusHtml(module.prereqs)}</span>
+								<span class="syllabus-review-count" data-module-id="${escapeSyllabusHtml(module.id)}">✅ ${reviewedInModule}/${topics.length} reviewed</span>
+							</div>
+							<p>${escapeSyllabusHtml(module.objective)}</p>
+						</div>
+					</header>
+					<div class="syllabus-topics">${topicsHtml}</div>
+					${projectHtml}
+				</section>
+			`;
+		}).filter(Boolean).join('');
+
+		if (countBadge) countBadge.textContent = `${visibleTopics} topic${visibleTopics === 1 ? '' : 's'}`;
+
+		list.innerHTML = moduleHtml || `<div class="syllabus-empty">No syllabus topics match “${escapeSyllabusHtml(query)}”. Try a broader keyword such as “martingale”, “C++”, or “portfolio”.</div>`;
+
+		// Keep review toggles from opening/closing the topic accordion
+		$$('.syllabus-review-toggle', list).forEach(toggle => {
+			toggle.addEventListener('click', (e) => e.stopPropagation());
+		});
+
+		// Persist review checkboxes
+		$$('.syllabus-review-checkbox', list).forEach(checkbox => {
+			checkbox.addEventListener('change', () => {
+				const topicId = checkbox.dataset.topicId;
+				if (checkbox.checked) {
+					state.reviewedSyllabus.add(topicId);
+				} else {
+					state.reviewedSyllabus.delete(topicId);
+				}
+				localStorage.setItem('quant_syllabus_reviewed', JSON.stringify(Array.from(state.reviewedSyllabus)));
+
+				// Update the per-module reviewed counter without re-rendering
+				$$('.syllabus-module', list).forEach(mod => {
+					const boxes = $$('.syllabus-review-checkbox', mod);
+					const counter = $('.syllabus-review-count', mod);
+					if (!counter) return;
+					const checked = boxes.filter(b => b.checked).length;
+					counter.textContent = `✅ ${checked}/${boxes.length} reviewed`;
+				});
+
+				updateProgressUI();
+			});
+		});
+
+	}
+
+	// --- Render 8: Curated Resources ---
 	function initResourcesTab() {
 		const grid = $('#resourcesGrid');
 		if (!grid) return;
@@ -1596,10 +1844,17 @@
 			<div class="resource-category-card">
 				<h3>${cat.category}</h3>
 				<div class="resource-items-list">
-					${cat.items.map(item => `
+					${cat.items.map(item => {
+						const titleHtml = item.url
+							? `<a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title} <span class="resource-link-icon">↗</span></a>`
+							: item.title;
+						const ctaHtml = item.url
+							? `<a class="resource-cta" href="${item.url}" target="_blank" rel="noopener noreferrer">${item.linkText || 'Open resource'} →</a>`
+							: '';
+						return `
 						<div class="resource-item">
 							<div class="resource-item-top">
-								<div class="resource-title">${item.title}</div>
+								<div class="resource-title">${titleHtml}</div>
 								${item.difficulty ? `<span class="res-tag">${item.difficulty}</span>` : ''}
 							</div>
 							${item.author ? `<div class="resource-author">${item.author}</div>` : ''}
@@ -1607,8 +1862,10 @@
 							<div class="resource-tags">
 								${(item.tags || []).map(t => `<span class="res-tag">${t}</span>`).join('')}
 							</div>
+							${ctaHtml}
 						</div>
-					`).join('')}
+					`;
+					}).join('')}
 				</div>
 			</div>
 		`).join('');
@@ -1706,13 +1963,14 @@
 		initLabsHub();
 		initQuizTab();
 		initInterviewTab();
+		initSyllabusTab();
 		initResourcesTab();
 		initCheatsheetTab();
 		initGlobalSearch();
 
 		// Check hash for direct tab linking
 		const hash = window.location.hash.replace('#', '');
-		if (['roles', 'roadmap', 'modules', 'labs', 'quizzes', 'questions', 'resources', 'cheatsheet'].includes(hash)) {
+		if (['roles', 'roadmap', 'modules', 'syllabus', 'labs', 'quizzes', 'questions', 'resources', 'cheatsheet'].includes(hash)) {
 			setActiveTab(hash);
 		} else {
 			setActiveTab('roles');

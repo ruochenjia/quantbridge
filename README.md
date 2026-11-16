@@ -35,24 +35,31 @@ Rigorous, undergraduate-level breakdowns with mathematical formulas, intuition, 
 4. **Kelly Criterion & Capital Growth Simulator**: Interactive betting simulation comparing optimal Kelly ($f^*$), Half-Kelly ($f^*/2$), over-betting ($2f^*$), and custom wagers on a logarithmic scale.
 5. **Mental Math Speed Trainer**: Zetamac-style speed arithmetic trainer for prop trading screens (Optiver, Akuna, SIG) with instant auto-advancing, streak tracking, and local storage high scores.
 
-### 5. 📝 Interactive Quizzes
-- Topic-specific quizzes covering Probability, Options, Market Microstructure, ML, and Systems.
+### 5. 📖 Full Syllabus Explorer
+- The complete six-module curriculum mirrored from the course document, organized into **24 core topics** across orientation, mathematical foundations, programming, markets, pricing/risk, time series/ML, and low-latency systems.
+- Every topic includes detailed subtopics, curated open resources, and **131 specific practice questions** with worked answers.
+- Search filters across topics, subtopics, resources, and practice prompts.
+- Per-topic **Reviewed** checkboxes persist in `localStorage` and contribute 20% of the Quant Readiness Index.
+
+### 6. 📝 Interactive Quizzes
+- **40 topic-specific quizzes** covering calculus, linear algebra, probability, stochastic calculus, options, market microstructure, portfolio theory, econometrics, ML, C++, and systems/networking.
 - Instant color-coded feedback and detailed step-by-step mathematical explanations.
 
-### 6. 💼 Curated Interview & Exam Question Bank
-- 22+ real interview questions from top firms (**Jane Street, Citadel, Optiver, SIG, IMC, Two Sigma, HRT, Jump, Akuna, D.E. Shaw**).
-- Filterable by firm, difficulty (Easy, Medium, Hard), and mathematical topic.
+### 7. 💼 Curated Interview & Exam Question Bank
+- **58 real interview questions** from top firms (**Jane Street, Citadel, Optiver, SIG, IMC, Two Sigma, HRT, Jump, Akuna, D.E. Shaw, AQR, Millennium, Point72, Flow Traders, Tower Research, QuantGuide**).
+- Filters are generated from the bank itself, so every firm and topic is always selectable.
 - Toggleable **💡 Hint** and **📝 Full Step-by-Step Solution** accordions with complete mathematical proofs.
 - "Mark as Mastered" toggle with progress saved in `localStorage`.
 
-### 7. 🌐 Curated External Resources & Vault
+### 8. 🌐 Curated External Resources & Vault
+- **10 resource categories** with clickable links to books, university courses, GitHub repositories, competitions, and practice platforms.
 - Recommended books (*The Green Book*, *Heard on the Street*, *Hull*, *Lopez de Prado*, *Shreve*, *Scott Meyers*).
-- Free university courses (MIT 18.S096, Stanford CME 241, Columbia IEOR notes).
-- Competitions and platforms (Jane Street ETC, Citadel Datathons, QuantConnect, Zetamac, OpenBB).
+- Free university courses (MIT 18.S096/18.02SC, Stanford CME 241, Columbia IEOR notes, QuantEcon).
+- Competitions and platforms (Jane Street ETC, Citadel Datathons, QuantConnect, Zetamac, OpenBB, QuantGuide).
 
-### 8. 📐 Formula Reference Sheet & Glossary
-- Quick-reference cards for essential formulas with variable definitions and financial applications.
-- Instant searchable glossary for quant terminology.
+### 9. 📐 Formula Reference Sheet & Glossary
+- **34 formula cards** with variable definitions and financial applications.
+- Instant searchable glossary with **51 quant terms** spanning pricing, risk, microstructure, and systems.
 
 ---
 
@@ -88,9 +95,14 @@ python3 -m http.server 8080
 
 ```
 learn_quant2/
-├── index.html        # Single-page web application markup & structure
-├── style.css         # Modern dark/light theme, responsive grid, and UI components
-├── data.js           # Structured educational data: roles, roadmap, modules, quizzes, questions, formulas
-├── app.js            # Interactive calculators, canvas charts, matching engine, quiz runner, and state
-└── README.md         # Documentation and guide
+├── index.html          # Single-page web application markup & structure
+├── style.css           # Modern dark/light theme, responsive grid, and UI components
+├── data.js             # Core data: roles, roadmap, modules, quizzes, questions, resources, formulas, glossary
+├── syllabus-a.js       # Full syllabus data for modules 0-3 (orientation through programming)
+├── syllabus-b.js       # Full syllabus data for modules 4-6 (pricing/risk, time series/ML, systems)
+├── questions-extra.js  # 36 additional interview questions (q23-q58)
+├── quizzes-extra.js    # 28 additional quizzes (qz13-qz40)
+├── resources-extra.js  # Additional resources, formulas, and glossary terms
+├── app.js              # Interactive calculators, canvas charts, matching engine, syllabus explorer, and state
+└── README.md           # Documentation and guide
 ```
