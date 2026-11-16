@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantBridge | Math & CS to Quant Finance for Undergraduates</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- KaTeX for crisp LaTeX formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#roles" class="brand">
+        <div class="brand-icon">Δ</div>
+        <span>QuantBridge</span>
+        <span class="brand-badge">UG Math & CS</span>
+      </a>
+
+      <ul class="nav-tabs">
+        <li><button class="nav-btn active" data-tab="roles">🎯 Roles</button></li>
+        <li><button class="nav-btn" data-tab="roadmap">🗺️ 4-Yr Roadmap</button></li>
+        <li><button class="nav-btn" data-tab="modules">📚 Core Modules</button></li>
+        <li><button class="nav-btn" data-tab="labs">🧪 Interactive Labs</button></li>
+        <li><button class="nav-btn" data-tab="quizzes">📝 Quizzes</button></li>
+        <li><button class="nav-btn" data-tab="questions">💼 Question Bank</button></li>
+        <li><button class="nav-btn" data-tab="resources">🌐 Resources</button></li>
+        <li><button class="nav-btn" data-tab="cheatsheet">📐 Cheat Sheet</button></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="globalSearchInput" class="search-input" placeholder="Search (Press '/')" />
+        </div>
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">☀️</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-tag">🚀 For 1st Year Undergraduates in Mathematics & Computer Science</div>
+      <h1>Bridge Calculus, Code & Alpha</h1>
+      <p>
+        The definitive zero-to-internship guide for university Math and CS students transitioning into
+        Quantitative Trading, Quantitative Research, and Low-Latency Systems Engineering.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-val">4</span>
+          <span class="stat-label">Core Quant Roles</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">8</span>
+          <span class="stat-label">Semesters Mapped</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">5</span>
+          <span class="stat-label">Interactive Labs</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statQuestionsMastered">0/22</span>
+          <span class="stat-label">Interview Questions</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" id="statQuizScore">0/12</span>
+          <span class="stat-label">Quizzes Passed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Student Quant Readiness Dashboard -->
+    <div class="progress-card">
+      <div class="progress-info">
+        <div class="progress-dial" id="userProgressDial">
+          <span class="progress-dial-val">0%</span>
+        </div>
+        <div class="progress-text">
+          <h3>Your Quant Readiness Index</h3>
+          <p>Complete quizzes, master interview questions, and check off semester milestones to level up.</p>
+        </div>
+      </div>
+      <div class="progress-badges">
+        <span class="badge-pill active" id="badgeQuestionsDone">🎯 <strong>0</strong> Mastered</span>
+        <span class="badge-pill active" id="badgeQuizDone">📝 <strong>0/12</strong> Quizzes</span>
+        <span class="badge-pill active" id="badgeHighScore">⚡ <strong>0</strong> Math High Score</span>
+      </div>
+    </div>
+
+    <!-- TAB 1: ROLES & PROFILE MATCHER -->
+    <div class="tab-content active" id="tab-roles">
+      <div class="section-header">
+        <h2>🎯 The Quantitative Landscape: What Do Quants Actually Do?</h2>
+        <p>Demystifying the four distinct career tracks for Math and CS graduates, compensation profiles, and skill mappings.</p>
+      </div>
+
+      <div class="roles-grid" id="rolesGrid"></div>
+
+      <!-- Interactive Role Finder -->
+      <div class="role-finder">
+        <h3>🔍 Interactive Role Matcher: Discover Your Ideal Track</h3>
+        <p>Answer 3 quick questions to see which quant discipline best matches your innate strengths and interests.</p>
+        
+        <div class="finder-questions">
+          <div class="finder-q-card">
+            <h4>1. What type of math or problem excites you most?</h4>
+            <div class="finder-options">
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q1" value="stoch" checked />
+                <span>Stochastic calculus, probability distributions, proving theorems</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q1" value="speed" />
+                <span>Fast mental math, calculating odds under time pressure, poker EV</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q1" value="discrete" />
+                <span>Discrete math, graph algorithms, bitwise logic & numerical efficiency</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="finder-q-card">
+            <h4>2. How do you prefer to spend your coding hours?</h4>
+            <div class="finder-options">
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q2" value="py" checked />
+                <span>NumPy/Pandas/JAX modeling, vectorization, backtesting signals</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q2" value="cs" />
+                <span>Writing ultra-optimized modern C++, squeezing CPU caches & eliminating allocations</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q2" value="scripts" />
+                <span>Quick ad-hoc scripts to monitor real-time PnL, risks, and volatility curves</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="finder-q-card">
+            <h4>3. What is your ultimate competitive mindset?</h4>
+            <div class="finder-options">
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q3" value="ml" checked />
+                <span>Discovering hidden statistical anomalies that nobody else in the market saw</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q3" value="poker" />
+                <span>Making instant bets, capturing the spread, and outplaying human opponents</span>
+              </label>
+              <label class="finder-opt">
+                <input type="radio" name="matcher_q3" value="latency" />
+                <span>Building the fastest machine on Earth to win nanosecond packet races</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button class="primary-btn" id="roleMatcherSubmit">Find My Quant Match</button>
+        <div class="finder-result" id="roleMatcherResult"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 4-YEAR ROADMAP -->
+    <div class="tab-content" id="tab-roadmap">
+      <div class="section-header">
+        <h2>🗺️ 4-Year University Roadmap for Math & CS Undergraduates</h2>
+        <p>A rigorous semester-by-semester curriculum synchronizing university math/CS courses with high-frequency prop trading and hedge fund recruiting timelines.</p>
+      </div>
+
+      <div class="roadmap-timeline" id="roadmapTimeline"></div>
+    </div>
+
+    <!-- TAB 3: CORE KNOWLEDGE MODULES -->
+    <div class="tab-content" id="tab-modules">
+      <div class="section-header">
+        <h2>📚 Core Academic Modules: The Quantitative Foundation</h2>
+        <p>In-depth conceptual breakdowns, mathematical formulas, and practical Python/C++ code implementations designed specifically for math & CS students.</p>
+      </div>
+
+      <div class="modules-list" id="modulesList"></div>
+    </div>
+
+    <!-- TAB 4: INTERACTIVE LABS HUB -->
+    <div class="tab-content" id="tab-labs">
+      <div class="section-header">
+        <h2>🧪 Quantitative Simulation & Trading Sandboxes</h2>
+        <p>Hands-on interactive models: options pricer, stochastic Monte Carlo paths, real-time matching engine, Kelly growth, and mental math training.</p>
+      </div>
+
+      <div class="labs-nav">
+        <button class="lab-tab-btn active" data-lab="bs">📈 1. Black-Scholes & Greeks</button>
+        <button class="lab-tab-btn" data-lab="mc">🎲 2. Monte Carlo (GBM)</button>
+        <button class="lab-tab-btn" data-lab="lob">⚡ 3. Limit Order Book (LOB)</button>
+        <button class="lab-tab-btn" data-lab="kelly">💰 4. Kelly Criterion</button>
+        <button class="lab-tab-btn" data-lab="trainer">🧠 5. Mental Math Trainer</button>
+      </div>
+
+      <!-- LAB 1: Black-Scholes & Greeks -->
+      <div class="lab-panel active" id="lab-bs">
+        <div class="lab-container">
+          <div class="lab-header">
+            <h3>Black-Scholes-Merton Options Pricer & Greeks Surface</h3>
+            <p>Adjust market variables to observe option pricing curvature, time decay, and sensitivity metrics in real time.</p>
+          </div>
+
+          <div class="lab-grid-2col">
+            <!-- Controls -->
+            <div class="controls-card">
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Underlying Spot Price (S):</span>
+                  <span class="control-val-badge" id="bsValS">$100.00</span>
+                </div>
+                <input type="range" id="bsInputS" class="range-slider" min="20" max="250" value="100" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Strike Price (K):</span>
+                  <span class="control-val-badge" id="bsValK">$100.00</span>
+                </div>
+                <input type="range" id="bsInputK" class="range-slider" min="20" max="250" value="100" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Time to Expiry (T):</span>
+                  <span class="control-val-badge" id="bsValT">90 days</span>
+                </div>
+                <input type="range" id="bsInputT" class="range-slider" min="1" max="730" value="90" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Implied Volatility (σ):</span>
+                  <span class="control-val-badge" id="bsValVol">25%</span>
+                </div>
+                <input type="range" id="bsInputVol" class="range-slider" min="5" max="150" value="25" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Risk-Free Rate (r):</span>
+                  <span class="control-val-badge" id="bsValR">5.0%</span>
+                </div>
+                <input type="range" id="bsInputR" class="range-slider" min="0" max="15" value="5" step="0.5">
+              </div>
+            </div>
+
+            <!-- Canvas Chart & Greeks Display -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4>Option Curve vs Spot Price</h4>
+                <div class="chart-toggles">
+                  <button class="chart-toggle-btn active" data-mode="price">Price</button>
+                  <button class="chart-toggle-btn" data-mode="delta">Delta (Δ)</button>
+                  <button class="chart-toggle-btn" data-mode="gamma">Gamma (Γ)</button>
+                  <button class="chart-toggle-btn" data-mode="vega">Vega (V)</button>
+                </div>
+              </div>
+              <div class="canvas-container">
+                <canvas id="bsCanvas"></canvas>
+              </div>
+
+              <div class="metrics-grid">
+                <div class="metric-pill">
+                  <div class="metric-name">Call Price</div>
+                  <div class="metric-value highlight-cyan" id="bsMetricCallPrice">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Put Price</div>
+                  <div class="metric-value" id="bsMetricPutPrice">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Call Delta (Δ)</div>
+                  <div class="metric-value highlight-emerald" id="bsMetricCallDelta">0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Put Delta (Δ)</div>
+                  <div class="metric-value" id="bsMetricPutDelta">0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Gamma (Γ)</div>
+                  <div class="metric-value highlight-purple" id="bsMetricGamma">0.000</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Vega (1% vol)</div>
+                  <div class="metric-value" id="bsMetricVega">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Call Theta (1d)</div>
+                  <div class="metric-value" id="bsMetricCallTheta">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Put Theta (1d)</div>
+                  <div class="metric-value" id="bsMetricPutTheta">$0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAB 2: Monte Carlo Geometric Brownian Motion -->
+      <div class="lab-panel" id="lab-mc">
+        <div class="lab-container">
+          <div class="lab-header">
+            <h3>Geometric Brownian Motion (GBM) Monte Carlo Path Simulator</h3>
+            <p>Model: dS_t = μ S_t dt + σ S_t dW_t. Simulate realistic stochastic asset price paths using the Box-Muller transform.</p>
+          </div>
+
+          <div class="lab-grid-2col">
+            <div class="controls-card">
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Initial Price (S₀):</span>
+                  <span class="control-val-badge" id="mcValS0">$100.00</span>
+                </div>
+                <input type="range" id="mcInputS0" class="range-slider" min="20" max="300" value="100" step="5">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Annual Drift (μ):</span>
+                  <span class="control-val-badge" id="mcValMu">10%</span>
+                </div>
+                <input type="range" id="mcInputMu" class="range-slider" min="-50" max="60" value="10" step="2">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Annual Volatility (σ):</span>
+                  <span class="control-val-badge" id="mcValVol">20%</span>
+                </div>
+                <input type="range" id="mcInputVol" class="range-slider" min="5" max="80" value="20" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Horizon (T):</span>
+                  <span class="control-val-badge" id="mcValT">1.0 yr</span>
+                </div>
+                <input type="range" id="mcInputT" class="range-slider" min="0.2" max="3.0" value="1.0" step="0.1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Number of Paths:</span>
+                  <span class="control-val-badge" id="mcValPaths">25 paths</span>
+                </div>
+                <input type="range" id="mcInputPaths" class="range-slider" min="5" max="60" value="25" step="5">
+              </div>
+
+              <button class="primary-btn" id="mcRunBtn" style="margin-top: 0.5rem;">🎲 Re-Simulate Paths</button>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4>Simulated Asset Trajectories (252 Trading Steps)</h4>
+              </div>
+              <div class="canvas-container">
+                <canvas id="mcCanvas"></canvas>
+              </div>
+
+              <div class="metrics-grid">
+                <div class="metric-pill">
+                  <div class="metric-name">Empirical Mean S_T</div>
+                  <div class="metric-value highlight-cyan" id="mcStatMean">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Theoretical E[S_T]</div>
+                  <div class="metric-value" id="mcStatTheoMean">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Terminal Std Dev</div>
+                  <div class="metric-value highlight-purple" id="mcStatStdDev">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">95% Value at Risk (VaR)</div>
+                  <div class="metric-value highlight-emerald" id="mcStatVaR95">$0.00</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">% Paths Positive</div>
+                  <div class="metric-value" id="mcStatWinRate">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAB 3: Limit Order Book & Matching Engine -->
+      <div class="lab-panel" id="lab-lob">
+        <div class="lab-container">
+          <div class="lab-header">
+            <h3>Limit Order Book (LOB) & Matching Engine Simulator</h3>
+            <p>Experience Level-2 order book depth, FIFO matching, bid-ask spread dynamics, and simulated toxic order flow.</p>
+          </div>
+
+          <div class="lob-layout">
+            <!-- Order Book Visual Ladder -->
+            <div class="lob-book-panel">
+              <div class="lob-ladder-header">
+                <span>Orders</span>
+                <span>Size</span>
+                <span>Price</span>
+                <span>Side</span>
+              </div>
+              <!-- Asks -->
+              <div class="lob-levels" id="lobAsksRows"></div>
+
+              <!-- Mid Price / Spread Banner -->
+              <div class="lob-spread-banner" id="lobSpreadDisplay">
+                <span>Mid: $100.00</span>
+                <span>Spread: $0.10</span>
+              </div>
+
+              <!-- Bids -->
+              <div class="lob-levels" id="lobBidsRows"></div>
+            </div>
+
+            <!-- Order Entry & Tape -->
+            <div class="lob-order-panel">
+              <h4 style="font-size: 1rem; color: var(--text-primary);">Order Entry Desk</h4>
+              
+              <div class="control-group">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Limit Price ($):</label>
+                <input type="number" id="lobOrderPrice" class="math-input" style="width: 100%; font-size: 1rem; padding: 0.4rem;" value="100.00" step="0.05">
+              </div>
+
+              <div class="control-group">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Quantity (shares):</label>
+                <input type="number" id="lobOrderQty" class="math-input" style="width: 100%; font-size: 1rem; padding: 0.4rem;" value="200" step="50">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <button class="primary-btn" id="lobBuyLimitBtn" style="background: var(--accent-emerald); font-size: 0.85rem; padding: 0.5rem;">Limit BUY</button>
+                <button class="primary-btn" id="lobSellLimitBtn" style="background: var(--accent-rose); font-size: 0.85rem; padding: 0.5rem;">Limit SELL</button>
+                <button class="secondary-btn" id="lobMarketBuyBtn" style="font-size: 0.82rem;">Market BUY</button>
+                <button class="secondary-btn" id="lobMarketSellBtn" style="font-size: 0.82rem;">Market SELL</button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.85rem;">
+                <input type="checkbox" id="lobAutoFlowToggle" class="action-checkbox" />
+                <label for="lobAutoFlowToggle">Simulate Live Exchange Market Flow (Bots)</label>
+              </div>
+
+              <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.75rem;">Time & Sales (Trade Tape)</h4>
+              <div class="tape-box" id="lobTradeTape"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAB 4: Kelly Criterion & Bankroll Growth -->
+      <div class="lab-panel" id="lab-kelly">
+        <div class="lab-container">
+          <div class="lab-header">
+            <h3>Kelly Criterion & Geometric Capital Growth</h3>
+            <p>f* = (bp - q) / b. Discover why over-betting leads to inevitable ruin and why proprietary trading shops use Half-Kelly.</p>
+          </div>
+
+          <div class="lab-grid-2col">
+            <div class="controls-card">
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Win Probability (p):</span>
+                  <span class="control-val-badge" id="kellyValP">55%</span>
+                </div>
+                <input type="range" id="kellyInputP" class="range-slider" min="45" max="80" value="55" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Payout Odds (b : 1):</span>
+                  <span class="control-val-badge" id="kellyValB">1.0:1</span>
+                </div>
+                <input type="range" id="kellyInputB" class="range-slider" min="0.5" max="3.0" value="1.0" step="0.1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Your Custom Bet Fraction (f):</span>
+                  <span class="control-val-badge" id="kellyValF">10%</span>
+                </div>
+                <input type="range" id="kellyInputF" class="range-slider" min="1" max="40" value="10" step="1">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label-row">
+                  <span>Number of Bets:</span>
+                  <span class="control-val-badge" id="kellyValN">150 bets</span>
+                </div>
+                <input type="range" id="kellyInputN" class="range-slider" min="50" max="400" value="150" step="25">
+              </div>
+
+              <div style="background: var(--bg-primary); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                <strong>Mathematically Optimal Kelly f*:</strong>
+                <span style="color: var(--accent-emerald); font-weight: 700;" id="kellyOptimalF">10.0%</span>
+              </div>
+
+              <button class="primary-btn" id="kellyRunBtn">📊 Simulate Wagers</button>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4>Logarithmic Wealth Trajectory ($1,000 Initial Bankroll)</h4>
+              </div>
+              <div class="canvas-container">
+                <canvas id="kellyCanvas"></canvas>
+              </div>
+
+              <div class="metrics-grid">
+                <div class="metric-pill">
+                  <div class="metric-name">Optimal Kelly (f*)</div>
+                  <div class="metric-value highlight-emerald" id="kellyStatFinalOpt">$0</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Half-Kelly (f*/2)</div>
+                  <div class="metric-value highlight-cyan" id="kellyStatFinalHalf">$0</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Over-Betting (2x f*)</div>
+                  <div class="metric-value" style="color: var(--accent-rose);" id="kellyStatFinalDouble">$0</div>
+                </div>
+                <div class="metric-pill">
+                  <div class="metric-name">Your Custom Bet</div>
+                  <div class="metric-value" style="color: var(--accent-amber);" id="kellyStatFinalUser">$0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAB 5: Mental Math Speed Trainer -->
+      <div class="lab-panel" id="lab-trainer">
+        <div class="lab-container">
+          <div class="mental-trainer">
+            <div class="trainer-card">
+              <h3 style="font-size: 1.5rem; margin-bottom: 0.4rem;">⚡ Quant Trader Mental Speed Drill</h3>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.5rem;">
+                Zetamac-style arithmetic trainer used by Optiver, Flow Traders, and Akuna Capital. Auto-advances immediately on correct answer!
+              </p>
+
+              <div class="trainer-hud">
+                <div class="hud-item">
+                  <span class="hud-val" id="trainerTimer">60</span>
+                  <span class="hud-label">Seconds Left</span>
+                </div>
+                <div class="hud-item">
+                  <span class="hud-val" id="trainerScore">0</span>
+                  <span class="hud-label">Solved</span>
+                </div>
+                <div class="hud-item">
+                  <span class="hud-val" id="trainerStreak">0</span>
+                  <span class="hud-label">Streak</span>
+                </div>
+                <div class="hud-item">
+                  <span class="hud-val" id="trainerHighScore">0</span>
+                  <span class="hud-label">Personal Best</span>
+                </div>
+              </div>
+
+              <div class="trainer-options">
+                <select id="trainerModeSelect" class="filter-select">
+                  <option value="arithmetic">Standard Arithmetic (+, -, ×)</option>
+                  <option value="percent">Quant Percentages (15% of 240)</option>
+                  <option value="ev">Game Theory & Expected Values</option>
+                </select>
+                <select id="trainerDurationSelect" class="filter-select">
+                  <option value="60">60 Seconds</option>
+                  <option value="120">120 Seconds</option>
+                </select>
+              </div>
+
+              <div class="math-problem" id="trainerProblem">Ready?</div>
+
+              <input type="text" id="trainerInput" class="math-input" placeholder="Answer" disabled autocomplete="off" />
+
+              <div>
+                <button class="primary-btn" id="trainerStartBtn">Start Mental Drill</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: INTERACTIVE QUIZZES -->
+    <div class="tab-content" id="tab-quizzes">
+      <div class="section-header">
+        <h2>📝 Interactive Quizzes: Test Your Conceptual Mastery</h2>
+        <p>Self-check assessments with instant grading and comprehensive mathematical proofs for every question.</p>
+      </div>
+
+      <div class="quiz-wrapper">
+        <div class="quiz-filter-bar">
+          <div class="quiz-topics-nav" id="quizTopicNav"></div>
+        </div>
+        <div id="quizCardsList"></div>
+      </div>
+    </div>
+
+    <!-- TAB 6: INTERVIEW QUESTION BANK -->
+    <div class="tab-content" id="tab-questions">
+      <div class="section-header">
+        <h2>💼 Comprehensive Quant Interview & Exam Question Bank</h2>
+        <p>Curated bank of 22+ questions asked at Jane Street, Citadel, Optiver, Two Sigma, SIG, and IMC. Includes hints, detailed solutions, and mastery tracking.</p>
+      </div>
+
+      <div class="question-bank-wrapper">
+        <!-- Toolbar & Filters -->
+        <div class="bank-toolbar">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <select id="filterFirm" class="filter-select">
+              <option value="all">All Firms</option>
+              <option value="Jane Street">Jane Street</option>
+              <option value="Citadel">Citadel</option>
+              <option value="Optiver">Optiver</option>
+              <option value="Two Sigma">Two Sigma</option>
+              <option value="SIG (Susquehanna)">SIG</option>
+              <option value="IMC Trading">IMC Trading</option>
+              <option value="Hudson River Trading (HRT)">HRT</option>
+              <option value="Jump Trading">Jump Trading</option>
+              <option value="Akuna Capital">Akuna Capital</option>
+              <option value="D.E. Shaw">D.E. Shaw</option>
+            </select>
+
+            <select id="filterDiff" class="filter-select">
+              <option value="all">All Difficulties</option>
+              <option value="Easy">Easy (Freshman Core)</option>
+              <option value="Medium">Medium (Sophomore/Junior)</option>
+              <option value="Hard">Hard (Superday Ready)</option>
+            </select>
+
+            <select id="filterCategory" class="filter-select">
+              <option value="all">All Categories</option>
+              <option value="Probability & Martingales">Probability & Martingales</option>
+              <option value="Probability & Bayes">Probability & Bayes</option>
+              <option value="Brainteasers & Logic">Brainteasers & Logic</option>
+              <option value="Expectation & Games">Expectation & Games</option>
+              <option value="Derivatives & Arbitrage">Derivatives & Arbitrage</option>
+              <option value="Linear Algebra & Stats">Linear Algebra & Stats</option>
+              <option value="Market Microstructure">Market Microstructure</option>
+              <option value="Market Making & Trading">Market Making & Trading</option>
+              <option value="Portfolio & Risk">Portfolio & Risk</option>
+              <option value="Quant Dev & Systems">Quant Dev & Systems</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <input type="text" id="bankSearchInput" class="search-input" style="width: 220px;" placeholder="Filter by keyword..." />
+            <span class="badge-pill" id="bankResultCount">22 questions</span>
+          </div>
+        </div>
+
+        <!-- Question Cards List -->
+        <div class="questions-list" id="interviewQuestionsList"></div>
+      </div>
+    </div>
+
+    <!-- TAB 7: CURATED EXTERNAL RESOURCES -->
+    <div class="tab-content" id="tab-resources">
+      <div class="section-header">
+        <h2>🌐 Curated External Resources & Reading Lists</h2>
+        <p>Essential books, free top-tier university lecture notes, GitHub repositories, and competition platforms.</p>
+      </div>
+
+      <div class="resources-grid" id="resourcesGrid"></div>
+    </div>
+
+    <!-- TAB 8: CHEAT SHEET & GLOSSARY -->
+    <div class="tab-content" id="tab-cheatsheet">
+      <div class="section-header">
+        <h2>📐 Formula Reference Sheet & Quant Glossary</h2>
+        <p>Instant mathematical reference and clear definitions of standard trading and research terminology.</p>
+      </div>
+
+      <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent-cyan);">Core Quantitative Formulas</h3>
+      <div class="cheatsheet-grid" id="formulasGrid"></div>
+
+      <h3 style="font-size: 1.25rem; margin: 2rem 0 1rem; color: var(--accent-emerald);">Searchable Quant Terminology Glossary</h3>
+      <input type="text" id="glossarySearchInput" class="glossary-search-input" placeholder="Search glossary terms (e.g. 'Adverse Selection', 'Micro-price')..." />
+
+      <table class="glossary-table">
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Definition & Context</th>
+          </tr>
+        </thead>
+        <tbody id="glossaryTableBody"></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: center;">
+      <div style="font-weight: 700; color: var(--text-primary); font-size: 1rem;">
+        QuantBridge — For First-Year Undergraduates in Math & CS
+      </div>
+      <div>
+        Designed for academic mastery, proprietary trading interviews, and algorithmic research excellence.
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        Includes Black-Scholes Greeks, Monte Carlo Stochastic Simulation, Limit Order Book Matching Engine, and 50+ Real Interview Problems.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
